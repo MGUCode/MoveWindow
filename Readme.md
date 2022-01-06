@@ -11,23 +11,15 @@ Example of command:
 
 
 ## Parameters
--w : Name of the main window
-
--x : X position of the high-left corner
-
--y : Y position of the high-left corner
-
--t : Time in seconds before moving the app (optionnal)
-
--c : Path to the program for execute it
-
--p : Program parameters. Use it with -c (optionnal)
-
--wd : Program Working directory (optionnal)
-
--d : Debug Mode (optionnal)
-
--h : Get help (optionnal)
+- -w : Name of the main window
+- -x : X position of the high-left corner
+- -y : Y position of the high-left corner
+- -t : Time in seconds before moving the app (optionnal)
+- -c : Path to the program for execute it
+- -p : Program parameters. Use it with -c (optionnal)
+- -wd : Program Working directory (optionnal)
+- -d : Debug Mode (optionnal)
+- -h : Get help (optionnal)
 
 
 ## Requirements
