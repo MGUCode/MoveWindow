@@ -27,6 +27,8 @@ namespace MoveWindow
         public string AppParameters = "";
         /// <summary>Program working directory</summary>
         public string AppWorkingDirectory = "";
+        /// <summary>Identifier/Number of the screen</summary>
+        public int ScreenIdentifier = 0;
 
 
         /// <summary>
@@ -82,6 +84,11 @@ namespace MoveWindow
                 {
                     DisplayHelp();
                 }
+
+                if (parameters[i] == "-screen")
+                {
+                    ScreenIdentifier = Int32.Parse(parameters[i + 1]);
+                }
             }
         }
 
@@ -104,7 +111,8 @@ namespace MoveWindow
                                 "-p : Program parameters. Use it with - c (optionnal)",
                                 "-wd: Program Working directory (optionnal)",
                                 "-d : Debug Mode (optionnal)",
-                                "-h : Get help (optionnal)" };
+                                "-h : Get help (optionnal)",
+                                "-screen : Identifier of the screen"};
 
             foreach (string line in lines)
             {

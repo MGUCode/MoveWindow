@@ -3,11 +3,22 @@
 ## Introduction
 MoveWindow is a litte command program that move your window on specific coordinates.
 
-Example of command:
+## Command examples 
+Move by window name and specific coordinates :
 
 `Movewindow.exe -w "My Window Title with space" -x 100 -y 42`
 
-`MoveWindow.exe -c C:\Windows\SysWOW64\win32calc.exe -x 42 -y 42`
+Move by window name and screen identifier (auto center window) :
+
+`Movewindow.exe -w "My Window Title with space" -screen 2`
+
+Start a program and move windw with specific coordinates :
+
+`MoveWindow.exe -c "C:\Windows\SysWOW64\win32calc.exe" -x 42 -y 42`
+
+Start a program and move to specific screen (auto center window) :
+
+`MoveWindow.exe -c "C:\Windows\SysWOW64\win32calc.exe" -screen 2`
 
 
 ## Parameters

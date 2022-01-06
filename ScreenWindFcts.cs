@@ -4,15 +4,65 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace MoveWindow
 {
     class ScreenWindFcts
-    {
-        /// <summary>Width of the window</summary>
-        private int WindowWidth = 0;
-        /// <summary>Heigh of the window</summary>
-        private int WindowHeigh = 0;
+    {     
+        Process MyMovingProcess;
+
+
+        public void GetProcess(string WindowName, string AppPath, string AppParameters, string AppWorkingDirectory, int Timer, bool DebugMode)
+        {
+            /*
+             * If the app path is null, find the program with the window name
+             * else, start the program thanks to the app path
+             */
+            if (AppPath == "")
+            {
+                //Wait some time before finding program
+                WaitTime(Timer);
+
+                //Find the program corresponding process
+                MyMovingProcess = FindWindowByName(WindowName, DebugMode);
+            }
+            else
+            {
+                MyMovingProcess = StartProgram(AppPath, AppParameters, AppWorkingDirectory);
+
+                //Wait some time before moving program
+                //Force the timer for waiting the window to open
+                if (Timer == 0)
+                {
+                    WaitTime((float)0.5);
+                }
+            }
+
+        }
+
+
+        public void MoveTheWindow(int XPos, int YPos, int ScreenIdentifier)
+        {
+            //Get size of the window like a Rectangle object
+            Rectangle WindowRectangle = GetWindowSizes();
+
+            //Move the window by coordinates
+            if (ScreenIdentifier == 0)
+            {
+                WindowRectangle.X = XPos;
+                WindowRectangle.Y = YPos;
+                MoveWindow(WindowRectangle);
+            }
+            //Move the window by screen identifier
+            else
+            {
+                Rectangle MyWindow = CreateCoordinates(ScreenIdentifier, WindowRectangle);
+                MoveWindow(MyWindow);
+            }
+
+        }
 
 
         /// <summary>
@@ -21,7 +71,7 @@ namespace MoveWindow
         /// <param name="WindowName">Name of the main window</param>
         /// <param name="DebugMode">Enable messages in console</param>
         /// <returns>Return a Process object</returns>
-        public Process FindWindowByName(string WindowName, bool DebugMode)
+        private Process FindWindowByName(string WindowName, bool DebugMode)
         {
             Process MovingProcess = GetProcess(WindowName, DebugMode);
             return MovingProcess;
@@ -66,7 +116,7 @@ namespace MoveWindow
         /// <param name="AppParameters">Program parameters</param>
         /// <param name="AppWorkingDirectory">Program working directory</param>
         /// <returns>Return the corresponding Process object. In case of error, return null value</returns>
-        public Process StartProgram(string AppPath, string AppParameters, string AppWorkingDirectory)
+        private Process StartProgram(string AppPath, string AppParameters, string AppWorkingDirectory)
         {
             //Set process informations
             ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -105,39 +155,77 @@ namespace MoveWindow
         /// <summary>
         /// Get sizes (Width and Heigh) of a window
         /// </summary>
-        /// <param name="MyProcess">Process for getting sizes</param>
-        /// <returns>Return WindowWidth and WindowHeight</returns>
-        private void GetWindowSizes(Process MyProcess)
+        /// <returns>Return width and heigh in a Rectangle object</returns>
+        private Rectangle GetWindowSizes()
         {
             // Initialization of the RECT structure
             RECT Wind = new RECT();
 
             // Get coordinates
-            WinAPI.GetWindowRect(MyProcess.MainWindowHandle, out Wind);
+            WinAPI.GetWindowRect(MyMovingProcess.MainWindowHandle, out Wind);
 
             // Calculate
-            WindowWidth = Wind.Right - Wind.Left;
-            WindowHeigh = Wind.Bottom - Wind.Top;
+            int WindowWidth = Wind.Right - Wind.Left;
+            int WindowHeigh = Wind.Bottom - Wind.Top;
+
+            return new Rectangle(0, 0, WindowWidth, WindowHeigh);
         }
 
 
         /// <summary>
         /// Move a window to specific coordinates
         /// </summary>
-        /// <param name="MyProcess">The process we want to move</param>
-        /// <param name="XPos">X position</param>
-        /// <param name="YPos">Y position</param>
-        public void MoveWindow(Process MyProcess, int XPos, int YPos)
+        /// <param name="MyMovingWindow">The window we want to move</param>
+        private void MoveWindow(Rectangle MyMovingWindow)
         {
-            if (MyProcess != null)
+            if (MyMovingProcess != null)
             {
-                GetWindowSizes(MyProcess);
+                WinAPI.MoveWindow(MyMovingProcess.MainWindowHandle, MyMovingWindow.X, MyMovingWindow.Y, MyMovingWindow.Width, MyMovingWindow.Height, true);
+            }
+        }
 
-                // Finally move the window
-                WinAPI.MoveWindow(MyProcess.MainWindowHandle, XPos, YPos, WindowWidth, WindowHeigh, true);
+
+        /// <summary>
+        /// Generate window coordinates for center a window in screen
+        /// </summary>
+        /// <param name="ScreenIdentifier">Identifier of the screen</param>
+        /// <param name="MyMovinWindow">The window we want to move</param>
+        /// <returns>Return a Rectangle object corresponding to the window final position</returns>
+        private Rectangle CreateCoordinates(int ScreenIdentifier, Rectangle MyMovinWindow)
+        {
+            foreach (Screen item in Screen.AllScreens)
+            {
+                //if the screen name ends with the screen identifier
+                if (item.DeviceName.EndsWith(ScreenIdentifier.ToString()))
+                {
+                    //get coordinates and sizes (width/heigh) like a rectangle
+                    Rectangle ScreenRectangle = item.Bounds;
+
+
+                    //calc window's final coordinates in the center of the screen
+                    int WindowXPos = ScreenRectangle.X + ((ScreenRectangle.Width - MyMovinWindow.Width) / 2);
+                    int WindowsYPos = ScreenRectangle.Y + ((ScreenRectangle.Height - MyMovinWindow.Height) / 2);
+
+                    return new Rectangle(WindowXPos, WindowsYPos, MyMovinWindow.Width, MyMovinWindow.Height);
+                }
+            }
+            return new Rectangle();
+        }
+
+
+        /// <summary>
+        /// Wait before execute the next statement
+        /// </summary>
+        /// <param name="Time">Waiting time in seconds</param>
+        private void WaitTime(float Time)
+        {
+            if (Time != 0)
+            {
+                //convert to milliseconds
+                int tmpint = (int)(Time * 1000);
+                Thread.Sleep(tmpint);
             }
         }
 
     }
-
 }
