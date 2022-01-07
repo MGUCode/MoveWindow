@@ -29,6 +29,7 @@ Start a program and move to specific screen (auto center window) :
 - -c : Path to the program for execute it
 - -p : Program parameters. Use it with -c (optionnal)
 - -wd : Program Working directory (optionnal)
+- -screen : screen identifier
 - -d : Debug Mode (optionnal)
 - -h : Get help (optionnal)
 
