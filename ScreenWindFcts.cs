@@ -38,6 +38,10 @@ namespace MoveWindow
                 {
                     WaitTime((float)0.5);
                 }
+                else
+                {
+                    WaitTime(Timer);
+                }
             }
 
         }
@@ -168,6 +172,9 @@ namespace MoveWindow
             int WindowWidth = Wind.Right - Wind.Left;
             int WindowHeigh = Wind.Bottom - Wind.Top;
 
+            Console.WriteLine("Window Width : " + WindowWidth);
+            Console.WriteLine("Window Heigh : " + WindowHeigh);
+
             return new Rectangle(0, 0, WindowWidth, WindowHeigh);
         }
 
@@ -180,6 +187,8 @@ namespace MoveWindow
         {
             if (MyMovingProcess != null)
             {
+                Console.WriteLine("Window X position : " + MyMovingWindow.X);
+                Console.WriteLine("Window Y position : " + MyMovingWindow.Y);
                 WinAPI.MoveWindow(MyMovingProcess.MainWindowHandle, MyMovingWindow.X, MyMovingWindow.Y, MyMovingWindow.Width, MyMovingWindow.Height, true);
             }
         }
@@ -204,9 +213,12 @@ namespace MoveWindow
 
                     //calc window's final coordinates in the center of the screen
                     int WindowXPos = ScreenRectangle.X + ((ScreenRectangle.Width - MyMovinWindow.Width) / 2);
-                    int WindowsYPos = ScreenRectangle.Y + ((ScreenRectangle.Height - MyMovinWindow.Height) / 2);
+                    int WindowYPos = ScreenRectangle.Y + ((ScreenRectangle.Height - MyMovinWindow.Height) / 2);
 
-                    return new Rectangle(WindowXPos, WindowsYPos, MyMovinWindow.Width, MyMovinWindow.Height);
+                    Console.WriteLine("Create Window X position : " + WindowXPos);
+                    Console.WriteLine("Create Window Y position : " + WindowYPos);
+
+                    return new Rectangle(WindowXPos, WindowYPos, MyMovinWindow.Width, MyMovinWindow.Height);
                 }
             }
             return new Rectangle();
